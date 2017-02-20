@@ -1,25 +1,59 @@
+var background = [];
+var player;
+var playerSprite = {
+  standL:[Rect(0,114,25,54)],
+  standR:[Rect(0,169,25,54)],
+  left:[Rect(0,114,25,54),Rect(25,114,25,54),Rect(52,114,25,54),Rect(77,114,21,54),Rect(100,114,27,54),Rect(126,114,25,54),Rect(150,114,25,54)],
+  right:[Rect(0,169,25,54),Rect(25,169,25,54),Rect(50,169,25,54),Rect(77,169,21,54),Rect(100,169,27,54),Rect(126,169,25,54),Rect(150,169,25,54)]
+};
+var gameState={
+  start:false,
+  gravity:Vector2(0,200),
+  playerDir:'R'
+};
 function Setup(){
   // one frame sprite :: can sharing.
   var prototype={
-    tileset:{
-      under:{
-        'large' :new Sprite([Resource.image.tileset,[Rect(4  ,88,96,32)]]),
-        'rect'  :new Sprite([Resource.image.tileset,[Rect(104,88,32,32)]]),
-        'stairs_up'  :new Sprite([Resource.image.tileset,[Rect(140,88,32,32)]]),
-        'stairs_down':new Sprite([Resource.image.tileset,[Rect(172,88,32,32)]]),
-        'moon' :new Sprite([Resource.image.tileset,[Rect(160,0,24,24)]])
-      }
+    background:{
+      sky:new Sprite(Resource.image.sky),
+      city:new Sprite(Resource.image.city),
+      cityF:new Sprite(Resource.image.cityF,[Rect(-10, 120, width, height)])
     }
   };
-  for(var x = 0 ; x <= 96*6; x+=96){
-    new GObject(prototype.tileset.under.large, Vector2(x,height-32));
-  }
-  new GObject(prototype.tileset.under.stairs_up, Vector2(300,height-32-32));
-  for(var x=332; x<332+32*5; x+=32){
-    new GObject(prototype.tileset.under.rect, Vector2(x,height-32-32));
-  }
-  new GObject(prototype.tileset.under.stairs_down, Vector2(492,height-32-32));
-  new GObject(prototype.tileset.under.moon, Vector2(width-50,10));
+  background.push(new GObject(prototype.background.sky),new GObject(prototype.background.cityF),new GObject(prototype.background.city));
+  player = new GObject(new Sprite(Resource.image.character,playerSprite.standR));
+  player.setPosition(width/2-12.5,height-54);
 }
 function Draw(ctx){
+  var playerPos = player.getPosition();
+  if(playerPos.y + 54 > height){
+    var standType = playerSprite['stand'+gameState.playerDir];
+    player.sprite.attachFrame(standType);
+    player.setPosition(playerPos.x,height-54);
+    player.setVelocity(0,0);
+    player.setAcceleration(0,0);
+    gameState.start = false;
+  }
+}
+function mouseClick(pos,prev){
+  var first = false;
+  if(gameState.start === false){
+    player.setVelocity(0,-120);
+    player.setAcceleration(gameState.gravity);
+    first = true;
+    gameState.start = true;
+  }
+  if(pos.x < width/2){
+    if(gameState.playerDir ==='R' || first){
+      player.sprite.attachFrame(playerSprite.left);
+    }
+    gameState.playerDir = 'L';
+    player.setVelocity(-30,-120);
+  }else{
+    if(gameState.playerDir ==='L' || first){
+      player.sprite.attachFrame(playerSprite.right);
+    }
+    gameState.playerDir = 'R';
+    player.setVelocity(30,-120);
+  }
 }

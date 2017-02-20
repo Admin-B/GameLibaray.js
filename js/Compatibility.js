@@ -15,3 +15,30 @@ if (typeof Element.prototype.addEventListener === 'undefined') {
     return this.attachEvent(e, callback);
   };
 }
+
+function getMousePos(event) {
+  var mouseX,mouseY
+  var e = event.originalEvent || event,
+    canvas = event.currentTraget || event.srcElement,
+    boundingRect = canvas.getBoundingClientRect();
+  if(e.touches){
+    mouseX = e.touches[0].clientX-boundingRect.left;
+    mouseY = e.touches[0].clientY-boundingRect.top;
+  }else{
+    mouseX = e.clientX-boundingRect.left;
+    mouseY = e.clientY-boundingRect.top;
+  }
+  return Vector2(mouseX,mouseY);
+}
+
+function getWindowSize() {
+  if (window.innerWidth && window.innerHeight) {
+    return Vector2(window.innerWidth, window.innerHeight);
+  }
+  if (document.documentElement && document.documentElement.clientWidth && document.documentElement.clientHeight) {
+    return Vector2(document.documentElement.clientWidth, document.documentElement.clientHeight);
+  }
+  if (document.body) {
+    return Vector2(document.body.clientWidth, document.body.clientHeight);
+  }
+}

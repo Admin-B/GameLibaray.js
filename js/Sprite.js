@@ -14,8 +14,7 @@ function Sprite(){
   this.frame = Array.isArray(frame) ? frame : [new Rect(0,0,image.width,image.height)];
   this.index = 0;
   this.count = this.frame.length;
-  this.delay = typeof delay === 'number' ? delay : 100;
-
+  this.delay = typeof this.delay === 'number' ? delay : 100;
   this.nowFrame = this.frame[this.index];
 
   this.oldAniTime = getTime();
@@ -29,6 +28,15 @@ Sprite.prototype.addCallback=function(type, func){
   if(callbackTypes.indexOf(type) !== -1 && typeof func ==='function'){
     this.callback[type] = func;
   }
+}
+Sprite.prototype.attachFrame=function(frame){
+  if(Array.isArray(frame)){
+    this.frame = frame;
+    this.count = frame.length;
+    this.index = 0;
+    return true;
+  }
+  return false;
 }
 Sprite.prototype.update=function(){
   var now = getTime();
