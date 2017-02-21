@@ -5,7 +5,7 @@ function Sprite(){
   var image  = arguments[0];
   var frame  = arguments[1];
   var delay  = arguments[2];
-  if(!image || Object.getPrototypeOf(image) !== Image.prototype){
+  if(!image || getPrototypeOf(image) !== Image.prototype){
     console.log(arguments)
     console.warn('Sprite Error:: Not Image');
     return false;
@@ -23,6 +23,12 @@ function Sprite(){
     firstFrame: undefined
   };
 }
+Sprite.prototype.getWidth=function(){
+  return this.nowFrame.width;
+}
+Sprite.prototype.getHeight=function(){
+  return this.nowFrame.height;
+}
 Sprite.prototype.addCallback=function(type, func){
   var callbackTypes = ['lastFrame','firstFrame'];
   if(callbackTypes.indexOf(type) !== -1 && typeof func ==='function'){
@@ -31,12 +37,27 @@ Sprite.prototype.addCallback=function(type, func){
 }
 Sprite.prototype.attachFrame=function(frame){
   if(Array.isArray(frame)){
-    this.frame = frame;
-    this.count = frame.length;
+    arguments = frame;
+  }
+  var arr = [];
+  for(var i = 0; i<arguments.length; i++){
+    if(!arguments[i]){
+      break;
+    }
+    if(getPrototypeOf(arguments[i]) === Rect.prototype){
+      arr.push(arguments[i]);
+      continue;
+    }
+    break;
+  }
+  if(arr.length === 0){
+    return false;
+  }else{
+    this.frame = arr;
+    this.count = arr.length;
     this.index = 0;
     return true;
   }
-  return false;
 }
 Sprite.prototype.update=function(){
   var now = getTime();
@@ -59,7 +80,7 @@ Sprite.prototype.update=function(){
   }
 }
 Sprite.prototype.draw=function(ctx){
-  if(!ctx || Object.getPrototypeOf(ctx) !== CanvasRenderingContext2D.prototype){
+  if(!isContext(ctx)){
     return false;
   }
   var nowFrame = this.frame[this.index];
@@ -78,8 +99,16 @@ function Rect(x, y, width, height){
   return true;
 }
 Rect.prototype.isCollision=function(oRect){
-  if(Object.getPrototypeOf(oRect) !== Rect.prototype){
+  if(getPrototypeOf(oRect) !== Rect.prototype){
     return false;
   }
-  return (this.x>=oRect.x && this.x<=oRect.x+oRect.width && this.y>=oRect.y && this.y<=oRect.y+oRect.height) || (oRect.x>=this.x && oRect.x<=this.x+this.width && oRect.y>=this.y && oRect.y<=this.y+this.height)
+  return (this.x>=oRect.x && this.x<=oRect.x+oRect.width && this.y>=oRect.y && this.y<=oRect.y+oRect.height) || (oRect.x>=this.x && oRect.x<=this.x+this.width && oRect.y>=this.y && oRect.y<=this.y+this.height);
+}
+
+Rect.prototype._isCollision=function(oRect, pos, oPos){
+  if(getPrototypeOf(oRect) !== Rect.prototype || !Vector.isVector(pos) || !Vector.isVector(oPos)){
+    return false;
+  }
+  return (this.x + pos.x>=oRect.x + oPos.x && this.x + pos.x<=oRect.x + oPos.x+oRect.width && this.y + pos.y>=oRect.y + oPos.y && this.y + pos.y<=oRect.y + oPos.y+oRect.height) ||
+         (oRect.x + oPos.x>=this.x + pos.x && oRect.x + oPos.x<=this.x + pos.x+this.width && oRect.y + oPos.y>=this.y + pos.y && oRect.y + oPos.y<=this.y + pos.y+this.height);
 }

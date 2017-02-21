@@ -69,7 +69,7 @@ Vector2.prototype.normalize=function(){
 /*Vector*/
 var Vector={
   isVector:function(v){
-    return v && Object.getPrototypeOf(v) === Vector2.prototype;
+    return v && getPrototypeOf(v) === Vector2.prototype;
   }
 };
 //random()
@@ -117,7 +117,7 @@ function getTime(){
 }
 /*Methods about Draw*/
 function clear(ctx, width, height){
-  if(Object.getPrototypeOf(ctx) === CanvasRenderingContext2D.prototype){
+  if(getPrototypeOf(ctx) === CanvasRenderingContext2D.prototype){
     ctx.clearRect(0, 0, width, height);
   }
 }
@@ -132,6 +132,10 @@ var mouseIsPressed = {
   middle:false,
   right:false,
 };
+var keyIsPressed = [];
+function keyIsDown(keyCode){
+  return keyIsPressed[keyCode] ? true : false;
+}
 (function(){
   function updateWindowSize(){
     var windowSize = getWindowSize();
@@ -146,7 +150,7 @@ var mouseIsPressed = {
 })();
 
 function Run(canvas){
-  if(Object.getPrototypeOf(canvas) !== HTMLCanvasElement.prototype){
+  if(getPrototypeOf(canvas) !== HTMLCanvasElement.prototype){
     return;
   }
   var ctx = canvas.getContext('2d');
@@ -207,6 +211,18 @@ function Run(canvas){
     }
     prevPos.mouseup = pos;
   });
+  window.addEventListener('keydown',function(e){
+    keyIsPressed[e.keyCode]=true;
+    if(typeof keyDown === 'function'){
+      keyDown(e.keyCode);
+    }
+  });
+  window.addEventListener('keyup',function(e){
+    keyIsPressed[e.keyCode]=false;
+    if(typeof keyUp === 'function'){
+      keyDown(e.keyCode);
+    }
+  });
   (function Animation(){
     for(var i = 0; i < __GObjectList.length; i++){
       __GObjectList[i].update();
@@ -220,4 +236,10 @@ function Run(canvas){
     }
     window.requestAnimFrame(Animation);
   })();
+}
+function isContext(ctx){
+  return ctx && getPrototypeOf(ctx) === CanvasRenderingContext2D.prototype;
+}
+function getPrototypeOf(obj){
+  return obj && Object.getPrototypeOf(obj);
 }

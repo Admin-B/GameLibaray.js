@@ -33,9 +33,9 @@
         Resource.addImage('city','./resources/City Background.png',preload);
         Resource.addImage('cityF','./resources/City Foreground.png',preload);
         Resource.addImage('character','./resources/character.png',preload);
-
+        Resource.addImage('tileset','./resources/tileset.png',preload);
         var loaded = 0;
-        var max    = 4;
+        var max    = 5;
         function preload(){
           if(++loaded == max){
             //main 루틴 호출
@@ -53,7 +53,6 @@
     <!-- 기능에 관련된 클래스 -->
     <script src='./js/GObject.js'></script>
     <script src='./js/Player.js'></script>
-    <script src='./js/Enermy.js'></script>
     <script src='./js/Item.js'></script>
 
     <!-- 메인루틴 로드 -->
