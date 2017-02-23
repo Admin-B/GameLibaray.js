@@ -14,6 +14,7 @@ function GObject(item, pos, vel, accl) {
   this.rect = Rect(0, 0, item.getWidth(), item.getHeight());
 
   this.oldUpdateTime = getTime();
+  this.status = new Object();
 
   this.active = typeof active === 'boolean' ? active : true;
   __GObjectList.push(this);
@@ -29,9 +30,8 @@ GObject.prototype.changeItem = function (item) {
     this.item = item;
     this.geometry = [Rect(0, 0, item.getWidth(), item.getHeight())];
     this.rect = Rect(0, 0, item.getWidth(), item.getHeight());
-    return true;
   }
-  return false;
+  return this;
 }
 
 GObject.prototype.applyGeometry = function (g) {
@@ -66,17 +66,16 @@ GObject.prototype.applyGeometry = function (g) {
     break;
   }
   if (arr.length === 0) {
-    return false;
   } else {
     this.geometry = arr;
     this.rect = rect;
-    return true;
   }
-  return true;
+  return this;
 }
 GObject.prototype.drawGeometry = function (ctx) {
   if (!isContext(ctx)) {
-    return false;
+  return this;
+
   }
   ctx.save();
   ctx.translate(this.pos.x, this.pos.y);
@@ -91,13 +90,14 @@ GObject.prototype.drawGeometry = function (ctx) {
     );
   }
   ctx.restore();
+  return this;
 }
 GObject.prototype.getRect = function () {
   return this.rect;
 }
 GObject.prototype.drawRect = function (ctx) {
   if (!isContext(ctx)) {
-    return false;
+    return this;
   }
   ctx.save();
   ctx.translate(this.pos.x, this.pos.y);
@@ -109,6 +109,7 @@ GObject.prototype.drawRect = function (ctx) {
     this.rect.height
   );
   ctx.restore();
+  return this;
 }
 GObject.prototype.isCollision = function (t) {
   var tPrototype = getPrototypeOf(t);
@@ -141,7 +142,7 @@ GObject.prototype.isCollision = function (t) {
 GObject.prototype.update = function () {
   if (this.active === false) {
     this.oldUpdateTime = now;
-    return;
+    return this;
   }
   var now = getTime();
   var duration = (now - this.oldUpdateTime) / 1000;
@@ -154,6 +155,7 @@ GObject.prototype.update = function () {
 
   this.item.update();
   this.oldUpdateTime = now;
+  return this;
 }
 GObject.prototype.setPosition = function () {
   if (arguments.length === 1 && Vector.isVector(arguments[0])) {
@@ -161,6 +163,7 @@ GObject.prototype.setPosition = function () {
   } else if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
     this.pos = Vector2(arguments[0], arguments[1]);
   }
+  return this;
 }
 GObject.prototype.inWindow = function () {
   return this.rect._isCollision(Rect(0, 0, width, height), this.pos, Vector2());
@@ -171,6 +174,7 @@ GObject.prototype.setVelocity = function () {
   } else if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
     this.vel = Vector2(arguments[0], arguments[1]);
   }
+  return this;
 }
 GObject.prototype.setAcceleration = function () {
   if (arguments.length === 1 && Vector.isVector(arguments[0])) {
@@ -178,6 +182,7 @@ GObject.prototype.setAcceleration = function () {
   } else if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
     this.accl = Vector2(arguments[0], arguments[1]);
   }
+  return this;
 }
 GObject.prototype.getPosition = function () {
   return this.pos;

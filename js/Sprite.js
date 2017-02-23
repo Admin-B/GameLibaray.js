@@ -39,6 +39,7 @@ Sprite.prototype.setPosition = function () {
   } else if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
     this.pos = Vector2(arguments[0], arguments[1]);
   }
+  return this;
 }
 Sprite.prototype.getWidth = function () {
   return this.nowFrame.width;
@@ -55,7 +56,6 @@ Sprite.prototype.addCallback = function (type, func) {
 }
 Sprite.prototype.clearFrame = function () {
   this.index = 0;
-  this.count = arr.length;
   this.nowFrame = this.frame[this.index];
   this.oldAniTime = getTime();
 
@@ -80,6 +80,7 @@ Sprite.prototype.applyFrame = function (frame) {
     return this;
   } else {
     this.frame = arr;
+    this.count = arr.length;
     this.clearFrame();
     return this;
   }

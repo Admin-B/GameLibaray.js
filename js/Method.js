@@ -136,7 +136,10 @@ var keyIsPressed = [];
 function isKeyDown(keyCode) {
   return keyIsPressed[keyCode] ? true : false;
 }
-
+var keyWasPressed = [];
+function wasKeyDown(keyCode) {
+  return keyWasPressed[keyCode] ? true : false;
+}
 (function () {
   function updateWindowSize() {
     var windowSize = getWindowSize();
@@ -217,12 +220,14 @@ function Run(canvas) {
     if (typeof keyDown === 'function') {
       keyDown(e.keyCode);
     }
+    keyWasPressed[e.keyCode] = true;
   });
   window.addEventListener('keyup', function (e) {
     keyIsPressed[e.keyCode] = false;
     if (typeof keyUp === 'function') {
-      keyDown(e.keyCode);
+      keyUp(e.keyCode);
     }
+    keyWasPressed[e.keyCode] = false;
   });
   (function Animation() {
     for (var i = 0; i < __GObjectList.length; i++) {
