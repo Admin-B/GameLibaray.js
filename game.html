@@ -1,61 +1,35 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-    <title>Game - 2d</title>
-    <meta charset="utf-8">
-    <!-- 스타일 시트 로드-->
-    <link rel="stylesheet" type='text/css' href='./css/game.css'></link>
-  </head>
-  <body>
-    <canvas id='DOMcanvas' width=300 height=500>HTML5를 지원하지 않는 브라우저 입니다.</canvas>
-    <script type='text/javascript'>
-      var canvas = document.getElementById('DOMcanvas');
-      /*
-      (function(){
-        window.addEventListener('resize',resizeWindow);
-        function resizeWindow(){
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerWidth;
-        }
-        resizeWindow();
-      })();
-      */
-    </script>
-    <!-- 호환성 조정 -->
-    <script src='./js/Compatibility.js'></script>
 
-    <!-- 리소스 로드 -->
-    <script src='./js/Resource.js'></script>
-    <script type='text/javascript'>
-      (function(){
-        /********* preload *********/
-        Resource.addImage('sky','./resources/Sky.png',preload);
-        Resource.addImage('city','./resources/City Background.png',preload);
-        Resource.addImage('cityF','./resources/City Foreground.png',preload);
-        Resource.addImage('character','./resources/character.png',preload);
-        Resource.addImage('tileset','./resources/tileset.png',preload);
-        var loaded = 0;
-        var max    = 5;
-        function preload(){
-          if(++loaded == max){
-            //main 루틴 호출
-            Run(canvas);
-          }
-        }
-      })();
-    </script>
-    <!-- 메소드 로드 -->
-    <script src='./js/Method.js'></script>
+<head>
+  <title>Game - 2d</title>
+  <meta charset="utf-8">
+  <!-- 스타일 시트 로드-->
+  <link rel="stylesheet" type='text/css' href='./css/game.css'></link>
+</head>
 
-    <!-- 그리기에 관련된 클래스 -->
-    <script src='./js/Sprite.js'></script>
+<body>
+  <canvas id='DOMcanvas' width=300 height=500>HTML5를 지원하지 않는 브라우저 입니다.</canvas>
+  <!-- 호환성 조정 -->
+  <script src='./js/Compatibility.js'></script>
 
-    <!-- 기능에 관련된 클래스 -->
-    <script src='./js/GObject.js'></script>
-    <script src='./js/Player.js'></script>
-    <script src='./js/Item.js'></script>
+  <!-- 리소스 로드 -->
+  <script src='./js/Resource.js'></script>
 
-    <!-- 메인루틴 로드 -->
-    <script src='./js/__Logic.js'></script>
-  </body>
+  <!-- 메소드 로드 -->
+  <script src='./js/Method.js'></script>
+
+  <!-- 그리기에 관련된 클래스 -->
+  <script src='./js/Sprite.js'></script>
+  <script src='./js/Tile.js'></script>
+
+  <!-- 기능에 관련된 클래스 -->
+  <script src='./js/GObject.js'></script>
+  <script src='./js/Container.js'></script>
+
+  <!-- 메인루틴 로드 -->
+  <script src='./game.js'></script>
+  
+</body>
+
 </html>
