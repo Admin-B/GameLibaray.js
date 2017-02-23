@@ -1,251 +1,88 @@
-/*********************************************/
-/*Method about Math*/
-/*********************************************/
-function Vector2(x, y) {
-  if (!(this instanceof arguments.callee)) {
-    return new arguments.callee(x, y);
-  }
-  if (Vector.isVector(arguments[0])) {
-    this.x = arguments[0].x;
-    this.y = arguments[0].y;
-    return;
-  }
-  this.x = typeof x === 'number' ? x : 0;
-  this.y = typeof y === 'number' ? y : 0;
-}
-Vector2.prototype.sum = function () {
-  if (arguments.length == 1 && Vector.isVector(arguments[0])) {
-    var oX = arguments[0].x,
-      oY = arguments[0].y;
-  } else if (arguments.length == 1 && typeof arguments[0] === 'number') {
-    var oX = arguments[0],
-      oY = arguments[0];
-  } else if (arguments.length == 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-    var oX = arguments[0],
-      oY = arguments[1];
-  } else {
-    return;
-  }
-  this.x += oX;
-  this.y += oY;
-  return this;
-}
-Vector2.prototype.sub = function () {
-  if (arguments.length == 1 && Vector.isVector(arguments[0])) {
-    var oX = arguments[0].x,
-      oY = arguments[0].y;
-  } else if (arguments.length == 1 && typeof arguments[0] === 'number') {
-    var oX = arguments[0],
-      oY = arguments[0];
-  } else if (arguments.length == 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-    var oX = arguments[0],
-      oY = arguments[1];
-  } else {
-    return;
-  }
-  this.x -= oX;
-  this.y -= oY;
-
-  return this;
-}
-Vector2.prototype.mul = function () {
-  if (arguments.length === 1) {
-    if (typeof arguments[0] === 'number') {
-      this.x *= arguments[0];
-      this.y *= arguments[0];
-    } else if (Vector.isVector(arguments[0])) {
-      this.x *= arguments[0].x;
-      this.y *= arguments[0].y;
-    }
-  }
-  return this;
-}
-Vector2.prototype.len = function () {
-  return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-}
-Vector2.prototype.normalize = function () {
-  this.mul(this.len());
-}
-/*Vector*/
-var Vector = {
-  isVector: function (v) {
-    return v && getPrototypeOf(v) === Vector2.prototype;
-  }
-};
-//random()
-//:arguments.length == 0 => 0~1
-//:arguments.length == 1 => 0~a
-//:arguments.length == 2 => a~b
-function randomF(a, b) {
-  if (arguments.length == 0) {
-    return Math.random();
-  } else if (arguments.length == 1) {
-    return Math.random() * a;
-  } else if (arguments.length == 2) {
-    var min = Math.min(a, b);
-    return Math.random() * (Math.max(a, b) - min) + min;
-  } else {
-    console.warn('The input value of the randomF function is 2 or less.');
-    return NaN;
-  }
-}
-function random(a, b) {
-  var a = int(a),
-    b = int(b);
-  if (arguments.length == 1) {
-    return int(Math.random() * (a + 1));
-  } else if (arguments.length == 2) {
-    var min = Math.min(a, b);
-    return int(Math.random() * (Math.max(a, b) - min + 1)) + min;
-  }
-  console.warn('The input value of the random function is 1 to 2.');
-  return NaN;
-}
-function degree(r) {
-  return Math.PI / 180 * r;
-}
-function radian(d) {
-  return 180 / Math.PI * d;
-}
-/*transform int type*/
-function int(n) {
-  return ~~n;
-}
-/*Methods about Time*/
-function getTime() {
-  return (new Date()).getTime();
-}
-/*Methods about Draw*/
-function clear(ctx, width, height) {
-  if (getPrototypeOf(ctx) === CanvasRenderingContext2D.prototype) {
-    ctx.clearRect(0, 0, width, height);
-  }
-}
-
-/******************************************/
-/*methods about animation frame*/
-/******************************************/
-var width, height;
-var windowWidth, windowHeight;
-var mouseIsPressed = {
-  left: false,
-  middle: false,
-  right: false,
-};
-var keyIsPressed = [];
-function isKeyDown(keyCode) {
-  return keyIsPressed[keyCode] ? true : false;
-}
-var keyWasPressed = [];
-function wasKeyDown(keyCode) {
-  return keyWasPressed[keyCode] ? true : false;
-}
 (function () {
-  function updateWindowSize() {
-    var windowSize = getWindowSize();
-    windowWidth = windowSize.x;
-    windowHeight = windowSize.y;
-    if (typeof windowResized === 'function') {
-      windowResized();
+    var canvas = document.getElementById('DOMcanvas');
+    /********* preload *********/
+    Resource.addImage('sky', './resources/Sky.png', preload);
+    Resource.addImage('city', './resources/City Background.png', preload);
+    Resource.addImage('cityF', './resources/City Foreground.png', preload);
+
+    Resource.addImage('character', './resources/character.png', preload);
+    Resource.addImage('tileset', './resources/tileset.png', preload);
+    var loaded = 0;
+    var max = 5;
+    function preload() {
+        if (++loaded == max) {
+            //Run Program
+            Run(canvas);
+        }
     }
-  }
-  updateWindowSize();
-  window.addEventListener('resize', updateWindowSize);
 })();
 
-function Run(canvas) {
-  if (getPrototypeOf(canvas) !== HTMLCanvasElement.prototype) {
-    return;
-  }
-  var ctx = canvas.getContext('2d');
-  width = canvas.width;
-  height = canvas.height;
+var background;
 
-  if (typeof Setup === 'function') {
-    Setup(ctx);
-  }
-  var prevPos = {
-    click: undefined,
-    mousemove: undefined,
-    mousedown: undefined,
-    mouseup: undefined
-  };
-  var mouseButtonType = ['left', 'middle', 'right'];
-  function setMouseButtonProperty(type, value) {
-    if (typeof type !== 'number') return false;
-    if (typeof value !== 'boolean') return false;
-    mouseIsPressed[mouseButtonType[type]] = value;
-  }
-  canvas.addEventListener('click', function (e) {
-    var pos = getMousePos(e);
-    /*
-      0 : left
-      1 : Middle
-      2 : Right
-    */
+var player;
+var sprite;
+var state;
 
-    if (typeof mouseClick === 'function') {
-      mouseClick(pos, prevPos.click);
-    }
-    prevPos.click = pos;
-  });
-  canvas.addEventListener('mousemove', function (e) {
-    var pos = getMousePos(e);
-
-    if (typeof mouseMove === 'function') {
-      mouseMove(pos, prevPos.mousemove);
-    }
-    prevPos.mousemove = pos;
-  });
-  canvas.addEventListener('mousedown', function (e) {
-    var pos = getMousePos(e);
-    setMouseButtonProperty(e.button, true);
-
-    if (typeof mouseDown === 'function') {
-      mouseDown(pos, prevPos.mousedown);
-    }
-    prevPos.mousedown = pos;
-  });
-  canvas.addEventListener('mouseup', function (e) {
-    var pos = getMousePos(e);
-    setMouseButtonProperty(e.button, false);
-
-    if (typeof mouseUp === 'function') {
-      mouseUp(pos, prevPos.mouseup);
-    }
-    prevPos.mouseup = pos;
-  });
-  window.addEventListener('keydown', function (e) {
-    keyIsPressed[e.keyCode] = true;
-    if (typeof keyDown === 'function') {
-      keyDown(e.keyCode);
-    }
-    keyWasPressed[e.keyCode] = true;
-  });
-  window.addEventListener('keyup', function (e) {
-    keyIsPressed[e.keyCode] = false;
-    if (typeof keyUp === 'function') {
-      keyDown(e.keyCode);
-    }
-    keyWasPressed[e.keyCode] = false;
-  });
-  (function Animation() {
-    for (var i = 0; i < __GObjectList.length; i++) {
-      __GObjectList[i].update();
-    }
-    clear(ctx, canvas.width, canvas.height);
-    for (var i = 0; i < __GObjectList.length; i++) {
-      __GObjectList[i].render(ctx);
-    }
-    if (typeof Draw === 'function') {
-      Draw(ctx);
-    }
-    window.requestAnimFrame(Animation);
-  })();
+function Setup(ctx) {
+    background = new GObject(
+        new Container(
+            Tile(Resource.image.sky),
+            Tile(Resource.image.city),
+            Tile(Resource.image.cityF)
+        )
+    );
+    sprite = {
+        stand: {
+            left: Sprite(Resource.image.character, Rect(3, 114, 19, 54)),
+            right: Sprite(Resource.image.character, Rect(3, 170, 19, 54))
+        },
+        move: {
+            left: Sprite(Resource.image.character,
+                [Rect(28, 114, 19, 54), Rect(51, 114, 23, 54), Rect(78, 114, 19, 54), Rect(100, 114, 25, 54), Rect(128, 114, 19, 54), Rect(151, 114, 23, 54), Rect(3, 114, 19, 54)]
+            ),
+            right: Sprite(Resource.image.character,
+                [Rect(28, 170, 19, 54), Rect(51, 170, 23, 54), Rect(78, 170, 19, 54), Rect(100, 170, 25, 54), Rect(128, 170, 19, 54), Rect(151, 170, 23, 54), Rect(3, 170, 19, 54)]
+            )
+        }
+    };
+    player = new GObject(sprite.stand.right);
+    player.setPosition(width / 2 - 9.5, height / 2 - 27);
+    player.status.speed = 50;
+    // player.setVelocity(50, 0);
 }
-function isContext(ctx) {
-  return ctx && getPrototypeOf(ctx) === CanvasRenderingContext2D.prototype;
+
+function Draw() {
+    var pos = player.getPosition();
+    if (player.inWindow()) {
+        background.getItem().items[1].setPosition(-Math.max(0, pos.x * 0.1), 0);
+        background.getItem().items[2].setPosition(-Math.max(0, pos.x * 0.05), 0);
+    }
 }
-function getPrototypeOf(obj) {
-  return obj && Object.getPrototypeOf(obj);
+
+function keyDown(keyCode) {
+    if (!wasKeyDown(keyCode)) {
+        var nSprite;
+        var speed = player.status.speed;
+        switch (keyCode) {
+            case 39:
+                nSprite = sprite.move.right;
+                player.setVelocity(speed, 0);
+                break;
+            case 37:
+                nSprite = sprite.move.left;
+                player.setVelocity(-speed, 0);
+                break;
+        }
+        if (nSprite) {
+            player.changeItem(nSprite.clearFrame());
+        }
+    }
+}
+
+function keyUp(keyCode){
+    if((keyCode === 39 || keyCode === 37) && wasKeyDown(keyCode) && !isKeyDown(39) && !isKeyDown(37)){
+        var direction = player.getVelocity().x < 0 ? 'left' : 'right';
+        player.setVelocity(0,0);
+        player.changeItem(sprite.stand[direction]);
+    }
 }
