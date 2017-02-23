@@ -75,14 +75,17 @@ function keyDown(keyCode) {
         }
         if (nSprite) {
             player.changeItem(nSprite.clearFrame());
+            player.status.keyCode = keyCode;
         }
     }
 }
 
 function keyUp(keyCode){
-    if((keyCode === 39 || keyCode === 37) && wasKeyDown(keyCode) && !isKeyDown(39) && !isKeyDown(37)){
+    if(keyCode === player.status.keyCode){
         var direction = player.getVelocity().x < 0 ? 'left' : 'right';
         player.setVelocity(0,0);
         player.changeItem(sprite.stand[direction]);
+        
+        player.status.keyCode = undefined;
     }
 }
