@@ -27,8 +27,8 @@ function Setup(ctx) {
     background = new GObject(
         new Container(
             Tile(Resource.image.sky),
-            Tile(Resource.image.city),
-            Tile(Resource.image.cityF)
+            Tile(Resource.image.cityF).setPosition(0, -100),
+            Tile(Resource.image.city).setPosition(0, 50)
         )
     );
     sprite = {
@@ -54,8 +54,8 @@ function Setup(ctx) {
 function Draw() {
     var pos = player.getPosition();
     if (player.inWindow()) {
-        background.getItem().items[1].setPosition(-Math.max(0, pos.x * 0.1), 0);
-        background.getItem().items[2].setPosition(-Math.max(0, pos.x * 0.05), 0);
+        background.getItem().items[1].setPosition(-Math.max(0, pos.x * 0.1), -150);
+        background.getItem().items[2].setPosition(-Math.max(0, pos.x * 0.6), 50);
     }
 }
 
