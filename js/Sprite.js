@@ -41,6 +41,9 @@ Sprite.prototype.setPosition = function () {
   }
   return this;
 }
+Sprite.prototype.getPosition = function () {
+  return this.pos;
+}
 Sprite.prototype.getWidth = function () {
   return this.nowFrame.width;
 }
@@ -61,7 +64,7 @@ Sprite.prototype.clearFrame = function () {
 
   return this;
 }
-Sprite.prototype.applyFrame = function (frame) {
+Sprite.prototype.setFrame = function (frame) {
   if (Array.isArray(frame)) {
     arguments = frame;
   }
@@ -129,13 +132,19 @@ Rect.prototype.isCollision = function (oRect) {
   if (getPrototypeOf(oRect) !== Rect.prototype) {
     return false;
   }
-  return (this.x >= oRect.x && this.x <= oRect.x + oRect.width && this.y >= oRect.y && this.y <= oRect.y + oRect.height) || (oRect.x >= this.x && oRect.x <= this.x + this.width && oRect.y >= this.y && oRect.y <= this.y + this.height);
+  return (((this.x >= oRect.x && this.x <= oRect.x+ oRect.width) || (this.x + this.width >= oRect.x && this.x + this.width <= oRect.x + oRect.width)) &&
+         ((this.y >= oRect.y && this.y <= oRect.y+ oRect.height) || (this.y + this.height >= oRect.y && this.y + this.height <= oRect.y + oRect.height))) ||
+         (((oRect.x >= this.x && oRect.x <= this.x+ this.width) || (oRect.x + oRect.width >= this.x && oRect.x + oRect.width <= this.x + this.width)) &&
+         ((oRect.y >= this.y && oRect.y <= this.y+ this.height) || (oRect.y + oRect.height >= oRect.y && oRect.y + oRect.height <= oRect.y + oRect.height)));
+  
 }
 
 Rect.prototype._isCollision = function (oRect, pos, oPos) {
   if (getPrototypeOf(oRect) !== Rect.prototype || !Vector.isVector(pos) || !Vector.isVector(oPos)) {
     return false;
   }
-  return (this.x + pos.x >= oRect.x + oPos.x && this.x + pos.x <= oRect.x + oPos.x + oRect.width && this.y + pos.y >= oRect.y + oPos.y && this.y + pos.y <= oRect.y + oPos.y + oRect.height) ||
-    (oRect.x + oPos.x >= this.x + pos.x && oRect.x + oPos.x <= this.x + pos.x + this.width && oRect.y + oPos.y >= this.y + pos.y && oRect.y + oPos.y <= this.y + pos.y + this.height);
+  return (((this.x + pos.x >= oRect.x + oPos.x && this.x + pos.x <= oRect.x + oPos.x+ oRect.width) || (this.x + pos.x + this.width >= oRect.x + oPos.x && this.x + pos.x + this.width <= oRect.x + oPos.x + oRect.width)) &&
+         ((this.y + pos.y >= oRect.y + oPos.y && this.y + pos.y <= oRect.y + oPos.y+ oRect.height) || (this.y + pos.y + this.height >= oRect.y + oPos.y && this.y + pos.y + this.height <= oRect.y + oPos.y + oRect.height))) ||
+         (((oRect.x + oPos.x >= this.x + pos.x && oRect.x + oPos.x <= this.x + pos.x+ this.width) || (oRect.x + oPos.x + oRect.width >= this.x + pos.x && oRect.x + oPos.x + oRect.width <= this.x + pos.x + this.width)) &&
+         ((oRect.y + oPos.y >= this.y + pos.y && oRect.y + oPos.y <= this.y + pos.y+ this.height) || (oRect.y + oPos.y + oRect.height >= oRect.y + oPos.y && oRect.y + oPos.y + oRect.height <= oRect.y + oRect.height)));
 }

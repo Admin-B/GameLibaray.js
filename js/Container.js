@@ -1,7 +1,9 @@
 function Container() {
-    this.addItem(Array.from(arguments));
+    this.items = [];
+    this.setItems(Array.from(arguments));
 }
-Container.prototype.items = new Array();
+//Container.prototype.items = new Array();
+//위와 같이 하면 배열을 서로 공유한다.
 Container.prototype.update = function (ctx) {
     for (var i = 0; i < this.items.length; i++) {
         this.items[i].update();
@@ -18,7 +20,7 @@ Container.prototype.getWidth = function () {
 Container.prototype.getHeight = function () {
     return this.height;
 }
-Container.prototype.addItem = function () {
+Container.prototype.setItems = function () {
     if (Array.isArray(arguments[0])) {
         arguments = arguments[0];
     }
@@ -30,8 +32,9 @@ Container.prototype.addItem = function () {
         if (getPrototypeOf(arguments[i]) !== Sprite.prototype) {
             break;
         }
-        var w = arguments[i].getWidth(),
-            h = arguments[i].getHeight();
+        var pos = arguments[i].getPosition();
+        var w = arguments[i].getWidth() + pos.x,
+            h = arguments[i].getHeight() + pos.y;
         if (max.width < w) {
             max.width = w;
         }
@@ -42,4 +45,6 @@ Container.prototype.addItem = function () {
     }
     this.width = w;
     this.height = h;
+
+    return this;
 }
